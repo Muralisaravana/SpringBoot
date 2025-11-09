@@ -44,3 +44,12 @@
 | ------------------- | ------------------------------------------------------------------ | ---------------------------- | ---------------------------------------------------- |
 | **`@PathVariable`** | **Building the URL path itself** (to identify a specific resource) | `/users/101`                 | “Get me the user whose ID is 101”                    |
 | **`@RequestParam`** | **Passing query parameters** (to filter, sort, or modify results)  | `/users?role=admin&sort=asc` | “Get me all users with role admin, sorted ascending” |
+
+
+| Feature                      | `@Valid`                                            | `@Validated`                                                            |
+| ---------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Belongs to**               | `jakarta.validation.Valid` (JSR-303 standard)       | `org.springframework.validation.annotation.Validated` (Spring-specific) |
+| **Used for**                 | Validating simple objects (mainly DTOs or entities) | Validating objects **and** validation **groups**                        |
+| **Group Validation Support** | ❌ Not supported                                     | ✅ Supported                                                             |
+| **Where usable**             | On method params, fields, or nested objects         | On class, method, or interface (method-level validation)                |
+| **Typical use**              | In `@RequestBody` inside controller                 | On entire controller class or service for method-level validation       |

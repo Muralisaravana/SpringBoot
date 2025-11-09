@@ -92,3 +92,36 @@ Singleton vs Prototype
 | **Default scope**         | ✅ Yes                                     | ❌ No                                                          |
 | **Typical usage**         | Services, Repositories, Controllers       | Stateful beans, non-thread-safe helpers, temporary objects    |
 
+
+
+@ResponseEntity is a wrapper for the entire HTTP response —
+not just the body, but also the status code and headers.
+
+So instead of returning just the data,
+you can also control how the data is sent back to the client.
+
+Why do we use ResponseEntity?
+Customize HTTP status codes (e.g., 201 Created, 404 Not Found, 400 Bad Request)
+Add custom headers (e.g., Location, Authorization, etc.)
+Return empty responses (like 204 No Content)
+Handle errors or exceptions cleanly
+Improve clarity for REST APIs
+
+ResponseEntity Methods
+
+| Method                        | Description     | Example                                               |
+| ----------------------------- | --------------- | ----------------------------------------------------- |
+| `.ok(body)`                   | 200 OK          | `ResponseEntity.ok(employee)`                         |
+| `.status(HttpStatus.CREATED)` | 201 Created     | `ResponseEntity.status(HttpStatus.CREATED).body(emp)` |
+| `.notFound()`                 | 404 Not Found   | `ResponseEntity.notFound().build()`                   |
+| `.noContent()`                | 204 No Content  | `ResponseEntity.noContent().build()`                  |
+| `.badRequest()`               | 400 Bad Request | `ResponseEntity.badRequest().body("Invalid ID")`      |
+
+
+| Good Practice              | Example                                  |
+| -------------------------- | ---------------------------------------- |
+| Use proper verbs           | `GET`, `POST`, `PUT`, `DELETE`           |
+| Meaningful status codes    | `200 OK`, `201 Created`, `404 Not Found` |
+| Consistent naming          | `/api/employees/{id}`                    |
+| Return data + message      | Wrap response in DTO if needed           |
+| Handle exceptions globally | Use your Phase 1 `@ControllerAdvice`     |

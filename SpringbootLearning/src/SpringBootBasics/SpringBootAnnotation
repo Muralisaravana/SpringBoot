@@ -12,6 +12,8 @@
 
 @RequestBody -> used to bind the JSON (or XML) in the HTTP request body to a Java object
 
+@ResponseEntity - return both body and HTTP status code together, e.g.ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
+
 @ConfigurationProperties -> Automatically fill this Java class with values from my config file
 
 @Value -> Inject values from properties/environment into Java fields
@@ -24,6 +26,33 @@
 
 @Modifying(clearAutomatically = true) --> Automatically clears cached entities, ensuring fresh data on next query.
 
-@ResponseEntity - return both body and HTTP status code together, e.g.ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
-
 @Valid - checks if the incoming request data follows the rules you defined in your Java class (like not null, valid email, etc.)
+
+Constraints annotation:
+| Annotation                   | Applies To                         | Meaning                                      |
+| ---------------------------- | ---------------------------------- | -------------------------------------------- |
+| `@NotNull`                   | Any type                           | Field cannot be `null`                       |
+| `@NotEmpty`                  | Strings, collections               | Must not be `null` **and** must not be empty |
+| `@NotBlank`                  | Strings                            | Must not be `null` or whitespace             |
+| `@Size(min, max)`            | Strings, collections               | Must be between given length                 |
+| `@Min(value)`                | Numbers                            | Must be greater than or equal to value       |
+| `@Max(value)`                | Numbers                            | Must be less than or equal to value          |
+| `@Positive`                  | Numbers                            | Must be > 0                                  |
+| `@PositiveOrZero`            | Numbers                            | Must be ≥ 0                                  |
+| `@Negative`                  | Numbers                            | Must be < 0                                  |
+| `@DecimalMin("value")`       | BigDecimal, double                 | Must be ≥ value                              |
+| `@DecimalMax("value")`       | BigDecimal, double                 | Must be ≤ value                              |
+| `@Email`                     | String                             | Must be a valid email format                 |
+| `@Pattern(regexp = "...")`   | String                             | Must match given regex                       |
+| `@Past`                      | Date, LocalDate                    | Must be a past date                          |
+| `@Future`                    | Date, LocalDate                    | Must be a future date                        |
+| `@AssertTrue`                | Boolean                            | Must be true                                 |
+| `@AssertFalse`               | Boolean                            | Must be false                                |
+| `@Digits(integer, fraction)` | Numbers                            | Limit integer/fraction digits                |
+| `@Length(min, max)`          | Strings (from Hibernate Validator) | Specifies character count range              |
+
+@Validated -> Spring-specific annotation (from org.springframework.validation.annotation.Validated)
+that is used to trigger validation on:
+method parameters
+method return values
+or bean properties
