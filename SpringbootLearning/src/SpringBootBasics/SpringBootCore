@@ -1,0 +1,16 @@
+| Topic              | Explanation                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Traditional Spring | Needed XML or Java-based configuration for beans, ViewResolvers, DataSources, etc.                                                         |
+| Spring Boot        | Opinionated framework built on Spring → “Convention over Configuration”. Automatically configures beans based on classpath and properties. |
+| Embedded server    | No external Tomcat needed — Boot embeds Tomcat/Jetty.                                                                                      |
+| Starters           | Simplify dependencies — e.g. `spring-boot-starter-web`, `spring-boot-starter-data-jpa`.                                                    |
+| Main class         | Uses `@SpringBootApplication` ( = `@Configuration` + `@EnableAutoConfiguration` + `@ComponentScan`)                                        |
+
+
+| Term                              | Meaning                                          |
+| --------------------------------- | ------------------------------------------------ |
+| **Spring Boot**                   | Framework to *bootstrap* Spring apps quickly     |
+| **Opinionated**                   | Provides pre-set defaults (but you can override) |
+| **Convention over Configuration** | If you follow standard structure, it just works  |
+
+Boot scans current package & subpackages for components.

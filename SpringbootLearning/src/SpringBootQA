@@ -1,0 +1,8 @@
+Can you explain how Boot reduces boilerplate compared to plain Spring?
+
+Spring Boot reduces boilerplate by:
+Eliminating XML (auto bean detection)
+Auto-configuring based on classpath
+Embedding servers (Tomcat/Jetty)
+Providing starter dependencies
+Convention over configuration → “It just works”
