@@ -12,7 +12,9 @@
 
 @RequestBody -> used to bind the JSON (or XML) in the HTTP request body to a Java object
 
-@ResponseEntity - return both body and HTTP status code together, e.g.ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
+@ResponseEntity -> return both body and HTTP status code together, e.g.ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
+
+@Configuration -> used to mark a class as a source of bean definitions for the Spring IoC (Inversion of Control) container.
 
 @ConfigurationProperties -> Automatically fill this Java class with values from my config file
 
@@ -62,3 +64,22 @@ or bean properties
 | You have one implementation now, but plan more later                    | `@Primary`                        | Makes one bean default automatically |
 | You need to switch beans dynamically (like “contract” vs “permanent”)   | `@Qualifier`                      | Gives you explicit control           |
 | You have multiple beans and different classes should use different ones | Combine `@Primary` + `@Qualifier` | Best of both                         |
+
+@EnableMethodSecurity --> used to activate method-level security in a Spring Boot application.
+
+| Annotation       | Description                                                   | Example                                                       |
+| ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `@PreAuthorize`  | Checks permission **before** method executes                  | `@PreAuthorize("hasRole('ADMIN')")`                           |
+| `@PostAuthorize` | Checks permission **after** method executes (based on result) | `@PostAuthorize("returnObject.owner == authentication.name")` |
+| `@Secured`       | Older style; allows role-based checks only                    | `@Secured("ROLE_ADMIN")`                                      |
+| `@RolesAllowed`  | From Jakarta; same as `@Secured`                              | `@RolesAllowed("ADMIN")`                                      |
+
+
+| Annotation              | Purpose                                              |
+| ----------------------- | ---------------------------------------------------- |
+| `@EnableWebSecurity`    | Enables web security configuration                   |
+| `@EnableMethodSecurity` | Allows method-level annotations like `@PreAuthorize` |
+| `@PreAuthorize`         | Authorize access before method execution             |
+| `@PostAuthorize`        | Authorize after method execution                     |
+| `@Secured`              | Restrict access to specific roles                    |
+| `@RolesAllowed`         | JSR-250 standard for roles                           |

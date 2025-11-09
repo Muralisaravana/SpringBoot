@@ -1,0 +1,44 @@
+JWT — the essentials
+JWT (JSON Web Token) is a compact, self-contained token that carries claims (user identity and metadata).
+Structure: header.payload.signature (each base64url-encoded)
+Header: algorithm and token type (e.g. {"alg":"HS256","typ":"JWT"})
+Payload (claims): sub (subject, typically username), exp (expiry), iat (issued at), plus custom claims like roles.
+Signature: HMAC or RSA signature over header+payload using a secret/private key.
+Stateless: server does not keep session state — token validity is proven by signature and expiry.
+
+High-level runtime flow
+A. Login (token issuance)
+Client sends credentials to /auth/login (username + password).
+Server uses AuthenticationManager (backed by UserDetailsService + PasswordEncoder) to authenticate.
+If authentication succeeds, server generates a JWT:
+Set sub = username, roles = user roles, iat, exp (short TTL, e.g. 15–60 min).
+Sign with HS256 (HMAC) or RS256 (RSA) using secret/key.
+Server returns token: { "token": "<jwt>" } (or set in response header).
+
+B. Each protected request
+Client includes token in header: Authorization: Bearer <token>.
+A JWT filter (a OncePerRequestFilter) inspects header before controller runs.
+Filter extracts token, validates signature and expiry (and optionally claims).
+If valid, load user info via UserDetailsService (or embed roles in claims) and create an Authentication (e.g., UsernamePasswordAuthenticationToken) and set it in SecurityContextHolder.
+Request proceeds to controller with authenticated principal available.
+If invalid/expired → return 401 Unauthorized.
+
+Key Spring integration points (where to plug components)
+AuthController: /auth/login endpoint — authenticates and returns token.
+JwtUtil (or JwtProvider): creates and validates tokens (generateToken, getUsername, validateToken).
+UserDetailsService: loads user details (username, password, authorities) — used for authentication and optionally for token validation.
+PasswordEncoder: BCryptPasswordEncoder for hashing passwords.
+JwtFilter: OncePerRequestFilter that reads header, validates token, and sets SecurityContext.
+
+SecurityConfig:
+Add JwtFilter before UsernamePasswordAuthenticationFilter.
+Set .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+Permit /auth/** and static/public endpoints; secure the rest.
+Expose AuthenticationManager for login flow if you use it directly.
+
+
+->“JWT is a stateless token that carries identity and claims, signed to ensure integrity.”
+->“On login we issue an access token (short TTL) and optionally a refresh token. The client attaches the access token in the Authorization header on subsequent requests.”
+->“In Spring Boot we implement a JwtFilter that validates tokens and sets the SecurityContext. The SecurityFilterChain is configured as stateless.”
+->“Key security concerns are secret/key management, short TTL, refresh token rotation, and revocation mechanisms.”
+->“For distributed services, RS256 (asymmetric signing) is preferred because services can verify with the public key without sharing the private key.”

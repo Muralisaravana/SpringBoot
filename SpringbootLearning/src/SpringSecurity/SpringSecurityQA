@@ -1,0 +1,11 @@
+| # | Question                                                         | Example Answer Summary                                                      |
+| - | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 1 | What is the difference between authentication and authorization? | Authentication = who you are; Authorization = what you can do               |
+| 2 | What is SecurityContextHolder?                                   | Stores details of the authenticated user for current thread/request         |
+| 3 | How does Spring Security handle authentication?                  | Through a filter chain + AuthenticationManager + UserDetailsService         |
+| 4 | How to secure REST endpoints?                                    | Use `@EnableMethodSecurity`, `@PreAuthorize`, and token-based (JWT) auth    |
+| 5 | What is CSRF, and when to disable it?                            | Protection against cross-site form attacks; disable for stateless REST APIs |
+| 6 | How do you implement custom authentication?                      | Create a custom `UserDetailsService` + PasswordEncoder                      |
+| 7 | Difference between Basic Auth and JWT?                           | Basic Auth sends credentials every time; JWT sends signed token (stateless) |
+
+

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,12 +30,14 @@ public class EmployeeController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Employee> create(@Valid @RequestBody Employee employee){
+	@PreAuthorize("hasRole('ADMIN')")
+   public ResponseEntity<Employee> create(@Valid @RequestBody Employee employee){
 		return new ResponseEntity<>(service.saveEmployee(employee),HttpStatus.CREATED);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Employee>> getAll(){
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<Employee>> getAll(){
 		return ResponseEntity.ok(service.getAllEmployees());
 	}
 	
@@ -50,6 +53,7 @@ public class EmployeeController {
 	}
 	
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 		service.deleteEmployee(id);
 		return ResponseEntity.noContent().build();

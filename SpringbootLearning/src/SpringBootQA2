@@ -1,0 +1,286 @@
+### 1. How does Spring Boot auto-configuration work?
+
+**Answer:** Spring Boot uses the `@EnableAutoConfiguration` annotation which loads configuration classes automatically based on what’s present on the classpath. It looks into `META-INF/spring.factories` to identify which configurations to apply. For example, if `spring-webmvc` is in the classpath, it auto-configures a `DispatcherServlet`.
+
+---
+
+### 2. How do you handle performance issues in Spring Boot applications?
+
+**Answer:**
+
+* Use caching (`@Cacheable`, `@CacheEvict`) to reduce database calls.
+* Enable asynchronous processing with `@Async` for parallel execution.
+* Use connection pooling (HikariCP by default in Boot).
+* Profile applications with Actuator metrics or JProfiler.
+* Optimize queries using pagination and projections.
+
+---
+
+### 3. How do you manage configurations across environments?
+
+**Answer:**
+Use multiple property or YAML files, like:
+
+```
+application-dev.yml
+application-test.yml
+application-prod.yml
+```
+
+Activate a profile with `spring.profiles.active=dev`.
+For microservices, use **Spring Cloud Config Server** for centralized configuration management.
+
+---
+
+### 4. How do you ensure data consistency in transactions?
+
+**Answer:**
+Use `@Transactional` for managing transactions. It ensures that all database operations within the annotated method execute in a single transaction — if one fails, all roll back.
+
+Example:
+
+```java
+@Transactional(rollbackFor = Exception.class)
+public void updateEmployee(Employee emp) {
+    repo.save(emp);
+    auditService.logChange(emp);
+}
+```
+
+---
+
+### 5. How do you secure REST APIs in Spring Boot?
+
+**Answer:**
+
+* Use **Spring Security** for authentication and authorization.
+* Implement **JWT-based** authentication for stateless APIs.
+* Use `@PreAuthorize` for method-level security.
+* Always use **HTTPS** and secure headers.
+* Validate input data to prevent injection attacks.
+
+---
+
+### 6. How do you monitor and debug Spring Boot applications?
+
+**Answer:**
+
+* Use **Spring Boot Actuator** for endpoints like `/actuator/health` and `/actuator/metrics`.
+* Integrate Actuator with **Prometheus**, **Grafana**, or **Spring Boot Admin**.
+* Use centralized logging tools like **ELK Stack (Elasticsearch, Logstash, Kibana)**.
+* Enable debug logs: `logging.level.root=DEBUG`.
+
+---
+
+### 7. Difference between `@Component` and `@Bean`?
+
+**Answer:**
+
+* `@Component` is used at the **class level** to mark it for component scanning.
+* `@Bean` is used in **@Configuration** classes to declare a bean manually.
+
+Example:
+
+```java
+@Component
+public class MyService { ... }
+
+@Configuration
+public class MyConfig {
+    @Bean
+    public MyService service() { return new MyService(); }
+}
+```
+
+---
+
+### 8. How do you handle exceptions globally?
+
+**Answer:**
+Use `@ControllerAdvice` or `@RestControllerAdvice` with `@ExceptionHandler` methods.
+
+Example:
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+}
+```
+
+---
+
+### 9. What is the use of profiles in Spring Boot?
+
+**Answer:**
+Profiles help you run the same application with different configurations (e.g., dev, test, prod). You can define environment-specific properties in different files and activate one with:
+
+```
+spring.profiles.active=prod
+```
+
+---
+
+### 10. How do you design microservices communication?
+
+**Answer:**
+
+* Use RESTful APIs for service-to-service communication.
+* Use **Feign Client** for declarative REST calls.
+* Use **Eureka Server** for service discovery.
+* Use **Spring Cloud Gateway** for routing and filtering requests.
+* Use **Resilience4j** or **Hystrix** for circuit breaking.
+
+---
+
+### 11. What is the purpose of Spring Boot Actuator?
+
+**Answer:**
+Actuator provides production-ready features like health checks, metrics, and monitoring. You can expose endpoints like `/actuator/health`, `/actuator/metrics`, `/actuator/info`, and integrate with Prometheus or Grafana.
+
+---
+
+### 12. Explain AOP and its use cases.
+
+**Answer:**
+AOP (Aspect-Oriented Programming) is used for separating cross-cutting concerns like logging, transactions, and security.
+
+Example:
+
+```java
+@Aspect
+@Component
+public class LoggingAspect {
+    @Before("execution(* com.example.employee.service.*.*(..))")
+    public void logBefore(JoinPoint jp) {
+        System.out.println("Executing: " + jp.getSignature());
+    }
+}
+```
+
+**Use cases:** Logging, performance tracking, transaction management.
+
+---
+
+### 13. How do you implement caching in Spring Boot?
+
+**Answer:**
+Enable caching with `@EnableCaching` and use annotations like `@Cacheable`, `@CacheEvict`, `@CachePut`.
+
+Example:
+
+```java
+@Cacheable("employees")
+public Employee getEmployee(Long id) {
+    return repo.findById(id).orElseThrow();
+}
+```
+
+**Caching tools:** EhCache, Caffeine, Redis.
+
+---
+
+### 14. How does `@Async` work in Spring Boot?
+
+**Answer:**
+`@Async` enables asynchronous execution using a separate thread pool.
+
+```java
+@Async
+public void sendEmail(String to) {
+    // executes in background thread
+}
+```
+
+Requires `@EnableAsync` on the main application class.
+
+---
+
+### 15. How do you test Spring Boot applications?
+
+**Answer:**
+Use Spring Boot testing annotations:
+
+* `@SpringBootTest` for integration testing
+* `@WebMvcTest` for controller testing
+* `@DataJpaTest` for JPA repository testing
+* `@MockBean` to mock dependencies
+
+Example:
+
+```java
+@SpringBootTest
+class EmployeeServiceTest {
+    @Autowired EmployeeService service;
+    @Test void testGetAll() { assertNotNull(service.getAllEmployees()); }
+}
+```
+
+---
+
+### 16. How do you handle configuration in microservices?
+
+**Answer:**
+Use **Spring Cloud Config Server** for centralized management. Configurations are stored in a Git repo and fetched dynamically by each microservice.
+
+---
+
+### 17. How do you secure communication between microservices?
+
+**Answer:**
+
+* Use **HTTPS** between services.
+* Use **JWT tokens** or **OAuth2** for authentication.
+* Use **API Gateway** for routing and centralized security.
+
+---
+
+### 18. Explain the difference between Monolithic and Microservice architectures.
+
+**Answer:**
+
+| Feature       | Monolithic       | Microservice         |
+| ------------- | ---------------- | -------------------- |
+| Deployment    | Single unit      | Independent units    |
+| Scalability   | Entire app       | Individual services  |
+| Database      | Shared           | Separate per service |
+| Communication | In-process       | REST / Messaging     |
+| Example       | Traditional apps | Spring Cloud apps    |
+
+---
+
+### 19. What’s the role of Feign Client in Spring Boot microservices?
+
+**Answer:**
+Feign is a declarative HTTP client for inter-service communication.
+
+```java
+@FeignClient(name="employee-service")
+public interface EmployeeClient {
+    @GetMapping("/api/employees/{id}")
+    Employee getEmployee(@PathVariable Long id);
+}
+```
+
+---
+
+### 20. How do you ensure observability in production systems?
+
+**Answer:**
+
+* Use **Actuator** + **Micrometer** + **Prometheus/Grafana** for metrics.
+* Use **Zipkin** or **Jaeger** for distributed tracing.
+* Use **Centralized Logging** with ELK stack.
+* Implement **health checks**, **alerts**, and **dashboards**.
+
+---
+
+### ✅ Final Notes for Lead-Level Interviews
+
+* Be ready to **explain architecture** (Controller → Service → Repository).
+* Emphasize **best practices** (profiles, transactions, exception handling, logging).
+* Demonstrate **awareness of scalability, monitoring, and security**.
+* When asked design questions, start with: *"Let’s break this problem into layers/components..."* and then explain how Spring Boot helps in each.

@@ -1,0 +1,105 @@
+What is Spring Security?
+Spring Security is a powerful framework that provides:
+Authentication → verifying who the user is
+Authorization → verifying what the user is allowed to do
+
+It integrates seamlessly with Spring Boot and works by configuring filters that intercept every HTTP request
+ before reaching your controllers.
+ 
+ | Concept                | Description                                               | Example                                                                 |
+| ---------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Authentication**     | Verifies identity (username/password, token, OAuth, etc.) | Logging in with user credentials                                        |
+| **Authorization**      | Checks permissions (roles or privileges)                  | Allow only ADMINs to delete data                                        |
+| **Principal**          | The current logged-in user                                | `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` |
+| **SecurityContext**    | Stores authentication info for the current request/thread | Used internally by Spring                                               |
+| **FilterChain**        | A chain of security filters that process each request     | JWT filter, UsernamePasswordAuthenticationFilter                        |
+| **UserDetailsService** | Loads user info from DB or memory                         | Custom user repository                                                  |
+| **PasswordEncoder**    | Hashes passwords securely (BCrypt recommended)            | `new BCryptPasswordEncoder()`                                           |
+ 
+Spring Security Workflow:
+Client → Security Filter Chain → AuthenticationManager → UserDetailsService → PasswordEncoder
+           ↓
+         Success → SecurityContext → Controller
+           ↓
+         Failure → 401 Unauthorized
+
+Explanation:
+A request hits your app.
+The Security Filter Chain intercepts it.
+The framework checks whether the endpoint requires authentication.
+If yes, it uses the AuthenticationManager to validate credentials.
+The UserDetailsService loads user details (from memory or DB).
+PasswordEncoder validates the password.
+If valid, authentication success → user details stored in SecurityContext.
+Controller executes normally.
+On logout or token expiry, the context is cleared. 
+
+@EnableMethodSecurity --> used to activate method-level security in a Spring Boot application.
+It allows you to use annotations like:
+@PreAuthorize
+@PostAuthorize
+@Secured
+@RolesAllowed
+
+| Annotation       | Description                                                   | Example                                                       |
+| ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `@PreAuthorize`  | Checks permission **before** method executes                  | `@PreAuthorize("hasRole('ADMIN')")`                           |
+| `@PostAuthorize` | Checks permission **after** method executes (based on result) | `@PostAuthorize("returnObject.owner == authentication.name")` |
+| `@Secured`       | Older style; allows role-based checks only                    | `@Secured("ROLE_ADMIN")`                                      |
+| `@RolesAllowed`  | From Jakarta; same as `@Secured`                              | `@RolesAllowed("ADMIN")`                                      |
+
+
+Authentication type in Spring Security:
+| Type                                 | Description                                       | Use Case                        |
+| ------------------------------------ | ------------------------------------------------- | ------------------------------- |
+| **In-memory**                        | Users stored directly in code (simple demo setup) | Demos, prototypes               |
+| **JDBC Authentication**              | Users stored in database                          | Basic enterprise apps           |
+| **LDAP Authentication**              | Auth through directory service                    | Enterprise environment          |
+| **Custom Authentication**            | Use your own user service                         | When integrating with custom DB |
+| **JWT / Token-based Authentication** | Stateless authentication using tokens             | Modern REST APIs, microservices |
+| **OAuth2 / SSO**                     | External login (Google, Okta, Azure AD)           | Enterprise SSO                  |
+
+Authorization levels:
+| Type             | Description                         | Example                                             |
+| ---------------- | ----------------------------------- | --------------------------------------------------- |
+| **Web-level**    | Protect URLs                        | `/admin/**` accessible only to ADMIN                |
+| **Method-level** | Annotate service/controller methods | `@PreAuthorize("hasRole('ADMIN')")`                 |
+| **Domain-level** | Object-based permissions            | Custom AccessDecisionVoter for fine-grained control |
+
+
+| Annotation              | Purpose                                              |
+| ----------------------- | ---------------------------------------------------- |
+| `@EnableWebSecurity`    | Enables web security configuration                   |
+| `@EnableMethodSecurity` | Allows method-level annotations like `@PreAuthorize` |
+| `@PreAuthorize`         | Authorize access before method execution             |
+| `@PostAuthorize`        | Authorize after method execution                     |
+| `@Secured`              | Restrict access to specific roles                    |
+| `@RolesAllowed`         | JSR-250 standard for roles                           |
+
+Common Authentication Mechanism:
+| Mechanism                | Description                                                 |
+| ------------------------ | ----------------------------------------------------------- |
+| **Basic Auth**           | Sends username/password with each request (Base64 encoded)  |
+| **Form Login**           | Uses login page form submission                             |
+| **JWT (JSON Web Token)** | Client stores token; server validates signature (stateless) |
+| **OAuth2**               | Third-party login (Google, GitHub, etc.)                    |
+
+For REST APIs → JWT is most common.
+
+CSRF (Cross-Site Request Forgery)
+Spring Security enables CSRF protection by default for form-based logins.
+For REST APIs, CSRF can be disabled since APIs don’t use sessions or forms,because API uses stateless authentication with tokens, 
+so CSRF protection is not required
+
+http.csrf().disable();
+
+
+Summary — Lead-Level Pointers
+
+✅ Spring Security is filter-based → sits in front of DispatcherServlet
+✅ Separates authentication (verify identity) and authorization (check access)
+✅ Supports method-level and URL-level security
+✅ UserDetailsService and PasswordEncoder are core interfaces
+✅ For REST APIs → prefer JWT (stateless)
+✅ For monolithic apps → session-based or form login
+✅ Always explain your security choices and why you used them
