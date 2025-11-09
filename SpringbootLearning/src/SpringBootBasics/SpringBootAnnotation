@@ -56,3 +56,9 @@ that is used to trigger validation on:
 method parameters
 method return values
 or bean properties
+
+| Use Case                                                                | Recommended Annotation            | Why                                  |
+| ----------------------------------------------------------------------- | --------------------------------- | ------------------------------------ |
+| You have one implementation now, but plan more later                    | `@Primary`                        | Makes one bean default automatically |
+| You need to switch beans dynamically (like “contract” vs “permanent”)   | `@Qualifier`                      | Gives you explicit control           |
+| You have multiple beans and different classes should use different ones | Combine `@Primary` + `@Qualifier` | Best of both                         |
