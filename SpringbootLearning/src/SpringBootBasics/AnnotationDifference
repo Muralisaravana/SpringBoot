@@ -1,0 +1,46 @@
+| Feature                             | `@Value`                            | `@ConfigurationProperties`                                   |
+| ----------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| **Purpose**                         | Inject a *single value*             | Bind a *group of related values*                             |
+| **Target**                          | Field or method parameter           | Entire POJO (class with fields)                              |
+| **Prefix support**                  | ❌ None                              | ✅ Yes (`prefix = "app"`)                                     |
+| **Type-safety**                     | ❌ Manual casting                    | ✅ Automatic (based on field types)                           |
+| **Default values**                  | ✅ Easy (`@Value("${key:default}")`) | ✅ Possible via defaults in fields                            |
+| **Complex/nested config**           | ❌ Harder                            | ✅ Supported                                                  |
+| **Validation support**              | ❌ No                                | ✅ Can use `@Validated`, `@NotNull`, etc.                     |
+| **Recommended for**                 | Few properties                      | Many grouped properties                                      |
+| **Spring Boot feature integration** | Basic                               | Works well with YAML, `@EnableConfigurationProperties`, etc. |
+
+| Annotation        | Used for                        | HTTP Method               | Typical Purpose       |
+| ----------------- | ------------------------------- | ------------------------- | --------------------- |
+| `@RequestMapping` | Generic mapping (any HTTP type) | GET / POST / PUT / DELETE | General use, flexible |
+| `@GetMapping`     | Read data                       | GET                       | Fetch / display info  |
+| `@PostMapping`    | Send data                       | POST                      | Create / submit data  |
+
+| Action              | HTTP Method | Annotation       | Meaning                   |
+| ------------------- | ----------- | ---------------- | ------------------------- |
+| You open the form   | `GET`       | `@GetMapping`    | Show the page (read data) |
+| You submit the form | `POST`      | `@PostMapping`   | Save data to the server   |
+| You delete an item  | `DELETE`    | `@DeleteMapping` | Remove data               |
+| You update an item  | `PUT`       | `@PutMapping`    | Update existing data      |
+
+
+
+
+| Feature              | `@Query`                             | `@Modifying`                                           |
+| -------------------- | ------------------------------------ | ------------------------------------------------------ |
+| **Purpose**          | Used for custom **SELECT** queries   | Used for **UPDATE**, **DELETE**, or **INSERT** queries |
+| **Return Type**      | Entities, DTOs, lists, scalar values | `int` (affected rows) or `void`                        |
+| **Transactional?**   | Not required (read-only)             | ✅ Required (write operation)                           |
+| **Default behavior** | Executes JPQL or SQL select          | Executes modifying query                               |
+| **Used together?**   | `@Query` alone                       | `@Query` + `@Modifying` together                       |
+
+| Annotation      | Used In    | Extracts value from | Example URL     | Example Code                          |
+| --------------- | ---------- | ------------------- | --------------- | ------------------------------------- |
+| `@PathVariable` | Controller | Path segment        | `/users/101`    | `@GetMapping("/{id}")`                |
+| `@RequestParam` | Controller | Query string        | `/users?id=101` | `@GetMapping` + `@RequestParam("id")` |
+| `@Param`        | Repository | JPA query parameter | —               | `@Query("... WHERE field = :param")`  |
+
+| Concept             | Used for                                                           | Example URL                  | Meaning                                              |
+| ------------------- | ------------------------------------------------------------------ | ---------------------------- | ---------------------------------------------------- |
+| **`@PathVariable`** | **Building the URL path itself** (to identify a specific resource) | `/users/101`                 | “Get me the user whose ID is 101”                    |
+| **`@RequestParam`** | **Passing query parameters** (to filter, sort, or modify results)  | `/users?role=admin&sort=asc` | “Get me all users with role admin, sorted ascending” |

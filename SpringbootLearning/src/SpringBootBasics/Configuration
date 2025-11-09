@@ -1,0 +1,8 @@
+| Concept                                      | Explanation                                                                      |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| `application.properties` / `application.yml` | Central config (e.g., DB URL, port).                                             |
+| External values                              | Use `@Value("${property.key}")`.                                                 |
+| `@ConfigurationProperties`                   | Bind multiple properties to a POJO.                                              |
+| Profiles                                     | Different env setups — dev/test/prod. Activate via `spring.profiles.active=dev`. |
+
+

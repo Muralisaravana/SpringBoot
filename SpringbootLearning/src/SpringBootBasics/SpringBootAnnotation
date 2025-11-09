@@ -1,0 +1,29 @@
+@RestController → Marks class as REST endpoint.
+
+@RequestMapping("/hello") → Base path for all APIs inside this controller.
+
+@GetMapping("/{name}") → GET requests are used to fetch or read data (like loading a web page or getting info).
+
+@PostMapping -> POST requests are used to send or create new data to the server (e.g., submitting a form).
+
+@PathVariable -> Path segment (part of the URL itself)
+
+@RequestParam -> Query parameter (after ? in URL)
+
+@RequestBody -> used to bind the JSON (or XML) in the HTTP request body to a Java object
+
+@ConfigurationProperties -> Automatically fill this Java class with values from my config file
+
+@Value -> Inject values from properties/environment into Java fields
+
+@Query ->Used for Querying(SELECT Query)
+
+@Transactional -> Used for Modifying operation in DB,also for maintains atomicity in Spring DB
+
+@Modifying → Marks query as update/delete
+
+@Modifying(clearAutomatically = true) --> Automatically clears cached entities, ensuring fresh data on next query.
+
+@ResponseEntity - return both body and HTTP status code together, e.g.ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
+
+@Valid - checks if the incoming request data follows the rules you defined in your Java class (like not null, valid email, etc.)

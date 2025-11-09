@@ -14,3 +14,81 @@
 | **Convention over Configuration** | If you follow standard structure, it just works  |
 
 Boot scans current package & subpackages for components.
+
+Bean Creation & Dependency Injection
+| Annotation                        | Purpose                                   |
+| --------------------------------- | ----------------------------------------- |
+| `@Component`                      | Generic bean managed by Spring IoC        |
+| `@Service`                        | Business-logic bean                       |
+| `@Repository`                     | DAO bean — also translates JPA exceptions |
+| `@Controller` / `@RestController` | Handles web requests                      |
+| `@Autowired`                      | Injects dependency automatically          |
+
+@Component
+| Concept             | Explanation                                                 |
+| ------------------- | ----------------------------------------------------------- |
+| **Purpose**         | Marks a class as a Spring-managed bean                      |
+| **Discovered by**   | `@ComponentScan`                                            |
+| **Default scope**   | Singleton                                                   |
+| **Bean name**       | Class name with first letter lowercase                      |
+| **Common subtypes** | `@Service`, `@Repository`, `@Controller`, `@RestController` |
+| **Benefit**         | No need to define beans manually in XML or Java config      |
+
+
+@Value
+| Concept           | Explanation                                                |
+| ----------------- | ---------------------------------------------------------- |
+| **Purpose**       | Inject values from properties/environment into Java fields |
+| **Syntax**        | `@Value("${property.key}")`                                |
+| **Default value** | `@Value("${property.key:defaultValue}")`                   |
+| **Supports**      | Strings, numbers, booleans, lists, expressions             |
+| **When to use**   | For small, specific configuration values                   |
+
+
+
+
+@ComponentScan:
+| Aspect          | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| Purpose         | Scans for Spring-managed beans                               |
+| Default in Boot | Automatically enabled via `@SpringBootApplication`           |
+| Default scope   | Same package as main class + subpackages                     |
+| Needed when     | Your beans are outside default package                       |
+| Detects         | `@Component`, `@Service`, `@Repository`, `@Controller`, etc. |
+
+Bean Naming
+
+By default, Spring uses the class name (camelCase) as the bean name.
+@Component
+public class MessageService { ... }
+
+You can override it:
+@Component("customMessageService")
+public class MessageService { ... }
+
+Then you can autowire it using that name:
+@Autowired
+@Qualifier("customMessageService")
+private MessageService messageService;
+
+You can also control bean scope (singleton, prototype, etc.):
+@Component
+@Scope("prototype")
+public class RandomNumberGenerator { ... }
+
+Singleton vs Prototype
+
+| Scope                   | Description                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| **Singleton** (default) | Only **one instance** of the bean is created and shared across the entire Spring container |
+| **Prototype**           | A **new instance** is created **every time** the bean is requested from the container      |
+
+| Feature                   | `singleton`                               | `prototype`                                                   |
+| ------------------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| **Bean instances**        | One shared instance                       | New instance each time                                        |
+| **Lifecycle managed by**  | Fully managed by Spring container         | Created by Spring, but destruction is caller’s responsibility |
+| **Memory usage**          | Low (one instance)                        | Higher (many instances)                                       |
+| **Thread-safety concern** | Not thread-safe by default (since shared) | Safer if each thread gets its own instance                    |
+| **Default scope**         | ✅ Yes                                     | ❌ No                                                          |
+| **Typical usage**         | Services, Repositories, Controllers       | Stateful beans, non-thread-safe helpers, temporary objects    |
+

@@ -1,0 +1,80 @@
+What is JPA?
+
+JPA (Java Persistence API) is just a specification — it defines how Java objects are mapped to database tables.
+It doesn’t do the work itself — implementations like Hibernate or EclipseLink actually perform the work.
+
+What is Spring Data JPA?
+
+Spring Data JPA is a Spring module that:
+Simplifies working with JPA/Hibernate.
+Removes boilerplate code like writing queries or managing EntityManager.
+With Spring Data JPA:
+You just write interfaces → Spring auto-generates SQL for you.
+
+
+Key Annotations & Entities
+@Entity- Marks a Java class as a database entity.
+@Table(name = "EMPLOYEE")-specify table name if different from class name.
+@Id, @GeneratedValue-Defines the primary key and how it’s auto-generated (AUTO, IDENTITY, SEQUENCE, TABLE).
+@Column-Customize column name, length, nullable, unique, etc
+@Transient-Field is not stored in the database.
+
+| Annotation    | Relationship                  | Example                       |
+| ------------- | ----------------------------- | ----------------------------- |
+| `@OneToOne`   | 1 employee → 1 address        | `Employee` ↔ `Address`        |
+| `@OneToMany`  | 1 department → many employees | `Department` ↔ List<Employee> |
+| `@ManyToOne`  | many employees → 1 department | reverse of above              |
+| `@ManyToMany` | many students ↔ many courses  | `@JoinTable` often used       |
+
+Repositories:
+You don’t need to write SQL.
+You define repository interfaces, Spring implements them automatically.
+
+JpaRepository provides:
+save()
+findAll()
+findById()
+deleteById()
+count(), etc.
+
+Spring generates SQL from method names:
+| Method                    | SQL Equivalent                      |
+| ------------------------- | ----------------------------------- |
+| `findByName`              | SELECT * FROM employee WHERE name=? |
+| `findBySalaryGreaterThan` | SELECT * WHERE salary>?             |
+| `findByNameAndSalary`     | WHERE name=? AND salary=?           |
+
+@Query
+If method naming is not enough, use JPQL or native SQL.
+
+@Transactional
+Used for managing transactions.
+By default, Spring Data JPA methods are transactional.
+Use it in custom service methods when you modify data.
+
+JPQL, Entity Lifecycle & Fetching
+JPQL (Java Persistence Query Language):
+Works on entities, not tables.
+
+Fetch Types
+FetchType.LAZY → loads related entity only when needed (default for collections)
+FetchType.EAGER → loads related entity immediately
+
+Cascade Types
+Cascade defines what happens to child entities when parent changes.
+
+Entity States:
+| State          | Meaning                  |
+| -------------- | ------------------------ |
+| **Transient**  | not in DB                |
+| **Persistent** | managed by EntityManager |
+| **Detached**   | was in DB, now unmanaged |
+| **Removed**    | marked for deletion      |
+
+
+| Topic           | Key Points                                                                        |
+| --------------- | --------------------------------------------------------------------------------- |
+| JPA Integration | Boot auto-configures Hibernate if `spring-boot-starter-data-jpa` is on classpath. |
+| Entity          | Annotate POJO with `@Entity`, `@Id`, etc.                                         |
+| Repository      | Interface extending `JpaRepository<Entity, IdType>`.                              |
+| Transactions    | Use `@Transactional` on service layer.                                            |

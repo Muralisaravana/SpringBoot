@@ -6,3 +6,102 @@ Auto-configuring based on classpath
 Embedding servers (Tomcat/Jetty)
 Providing starter dependencies
 Convention over configuration → “It just works”
+
+What is Inversion of Control (IoC)?
+“Inversion of Control” simply means you (developer) are not creating or managing objects manually —
+you let Spring create, manage, and inject them for you.
+✅ Normally: Your code controls the objects.
+✅ With IoC: Spring controls the objects.
+That’s why it’s called Inversion of Control — the control of object creation is “inverted” from you to Spring.
+
+
+What is Dependency Injection (DI)?
+Dependency Injection is how Spring implements IoC.
+It means giving the required object (dependency) to a class instead of the class creating it itself.
+
+| Type                      | Example                                      | Description                                               |
+| ------------------------- | -------------------------------------------- | --------------------------------------------------------- |
+| **Constructor Injection** | `@Autowired public Car(Engine e)`            | Best practice, ensures immutability                       |
+| **Setter Injection**      | `@Autowired public void setEngine(Engine e)` | Optional dependencies                                     |
+| **Field Injection**       | `@Autowired private Engine engine;`          | Quick, but less testable (not recommended for large apps) |
+
+
+What is the IoC Container?
+In Spring, the IoC Container is what manages all your objects (called beans).
+It does three main jobs:
+Creates objects (Beans)
+Manages dependencies (injects them)
+Controls lifecycle (init, destroy, etc.)
+IoC containers in Spring:
+ApplicationContext (commonly used)
+BeanFactory (basic version)
+
+| Question                                 | Best Answer                                                                                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **What is IoC?**                         | It’s a design principle where the control of object creation and lifecycle is handed over to the Spring container. |
+| **What is DI?**                          | It’s a way for Spring to inject dependencies into a class instead of the class creating them itself.               |
+| **Relation between IoC and DI?**         | IoC is the principle, and DI is the technique that implements it.                                                  |
+| **What is a Bean in Spring?**            | A bean is any object managed by the Spring IoC container.                                                          |
+| **How does Spring know what to inject?** | Through annotations like `@Component`, `@Service`, `@Repository`, and `@Autowired`.                                |
+
+Beans Lifecycle:
+Created → Dependencies Injected → Initialized → Used → Destroyed
+
+| Step | Phase                                           | Description                                                                      |
+| ---- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1️⃣  | **Instantiation**                               | Spring **creates the object** of your bean class                                 |
+| 2️⃣  | **Populate properties (DI)**                    | Spring **injects dependencies** using `@Autowired`, `@Value`, etc.               |
+| 3️⃣  | **BeanNameAware / BeanFactoryAware (optional)** | If your bean implements these interfaces, Spring passes context info             |
+| 4️⃣  | **Before Initialization (BeanPostProcessor)**   | Custom logic before init methods                                                 |
+| 5️⃣  | **Initialization**                              | Spring calls methods annotated with `@PostConstruct` or `afterPropertiesSet()`   |
+| 6️⃣  | **After Initialization (BeanPostProcessor)**    | Any post-processing logic runs                                                   |
+| 7️⃣  | **Bean is ready for use**                       | Bean is in the ApplicationContext — you can use it                               |
+| 8️⃣  | **Destruction**                                 | When app closes, Spring calls `@PreDestroy` or `destroy()` to clean up resources |
+
+Annotations in Bean Lifecycle
+| Annotation                         | Purpose                                            | When It Runs               |
+| ---------------------------------- | -------------------------------------------------- | -------------------------- |
+| `@PostConstruct`                   | Initialization logic (after dependencies injected) | After object creation      |
+| `@PreDestroy`                      | Cleanup logic (before bean is destroyed)           | Before app shutdown        |
+| `@Autowired`                       | Dependency injection                               | During property population |
+| `@Bean(initMethod, destroyMethod)` | Specify custom init/destroy methods                | On bean config             |
+
+
+| Phase                | Analogy                          |
+| -------------------- | -------------------------------- |
+| Instantiation        | Baby is born 👶                  |
+| Dependency Injection | Learns from parents and teachers |
+| Initialization       | Starts working / setup ready     |
+| Usage                | Performs actual tasks            |
+| Destruction          | Retires / passes away ☠️         |
+
+
+Can you explain how Spring Boot picks environment-specific files?
+Spring Boot loads:
+
+The default file (application.properties or .yml)
+Then it looks at the active profile, and loads that file on top of it
+(overriding duplicate properties)
+
+What is N+1 problem?
+→ When EAGER fetching loads too many queries, causing performance hit.
+
+What is @RestControllerAdvice?
+It’s a Spring annotation that allows you to handle exceptions globally for all REST controllers in a consistent way.
+
+Difference between @ControllerAdvice and @RestControllerAdvice?
+| `@ControllerAdvice`            | `@RestControllerAdvice`   |
+| ------------------------------ | ------------------------- |
+| Used for web MVC (views)       | Used for REST APIs (JSON) |
+| Returns ModelAndView           | Returns JSON body         |
+| Needs `@ResponseBody` manually | Automatically includes it |
+
+Why use ResponseEntity?
+It lets you return both body and HTTP status code together, e.g.
+ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorObject);
+
+How does Spring find which @ExceptionHandler to use?
+It looks for the closest match — first local (in controller), then global (@ControllerAdvice).
+
+What’s the advantage of global handling?
+Centralized logic, cleaner controllers, consistent API responses.

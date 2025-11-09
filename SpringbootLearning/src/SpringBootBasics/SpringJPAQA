@@ -1,0 +1,12 @@
+| Question                                                  | Short Answer                                                                  |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| What is JPA?                                              | Specification for ORM in Java                                                 |
+| What is Hibernate?                                        | Implementation of JPA                                                         |
+| What is ORM?                                              | Object-Relational Mapping (object ↔ table)                                    |
+| What is difference between `save()` and `saveAndFlush()`? | `save()` saves in persistence context; `saveAndFlush()` commits immediately   |
+| What’s difference between JPQL and SQL?                   | JPQL works on entities, SQL on tables                                         |
+| What is `@Transactional` used for?                        | To ensure atomicity in DB operations                                          |
+| Difference between `CrudRepository` and `JpaRepository`?  | `JpaRepository` = all of `CrudRepository` + paging + sorting                  |
+| What is `EntityManager`?                                  | Interface used to manage entities manually (rarely needed in Spring Data JPA) |
+| What is `@Modifying`?                                     | Used for UPDATE/DELETE queries                                                |
+| What is optimistic vs pessimistic locking?                | Concurrency control — optimistic uses versioning; pessimistic locks row       |

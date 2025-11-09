@@ -1,0 +1,29 @@
+Exception handling means catching unexpected errors gracefully and 
+returning meaningful responses to the client 
+
+| Type                                              | Description                                  | Example                                |
+| ------------------------------------------------- | -------------------------------------------- | -------------------------------------- |
+| **Try-Catch (basic)**                             | Handle in method locally                     | `try { ... } catch (Exception e)`      |
+| **`@ExceptionHandler`**                           | Handle specific exceptions in a controller   | `@ExceptionHandler(MyException.class)` |
+| **`@ControllerAdvice` / `@RestControllerAdvice`** | Global exception handler for all controllers | `@RestControllerAdvice`                |
+
+Global Exception Handling - @RestControllerAdvice
+When you have many controllers, you don’t want to repeat @ExceptionHandler everywhere.
+That’s where @RestControllerAdvice comes in.
+It’s a global error handler — works for the entire application.
+
+| Exception Type                               | When it occurs                                | Typical Status |
+| -------------------------------------------- | --------------------------------------------- | -------------- |
+| `EntityNotFoundException` / custom exception | Data not found                                | 404            |
+| `MethodArgumentNotValidException`            | Validation fails                              | 400            |
+| `HttpRequestMethodNotSupportedException`     | Wrong HTTP method (e.g., POST instead of GET) | 405            |
+| `DataIntegrityViolationException`            | Database constraint violation                 | 409            |
+| `NullPointerException` or generic            | Any unexpected error                          | 500            |
+
+| Concept                 | Description                                     | Example                               |
+| ----------------------- | ----------------------------------------------- | ------------------------------------- |
+| `@ExceptionHandler`     | Handles exceptions in one controller            | Inside a single controller            |
+| `@ControllerAdvice`     | Handles exceptions globally (all controllers)   | Separate class                        |
+| `@RestControllerAdvice` | Same as above, but returns JSON instead of view | API-based apps                        |
+| `ResponseEntity`        | Used to send custom HTTP status and body        | `ResponseEntity.status(404).body(..)` |
+| `ErrorResponse`         | Custom response DTO for errors                  | `new ErrorResponse(...)`              |
