@@ -1,0 +1,10 @@
+| Question                                            | Answer Summary                                                               |
+| --------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **What is DispatcherServlet?**                      | It’s the front controller in Spring MVC handling all incoming HTTP requests. |
+| **What pattern does it follow?**                    | Front Controller Design Pattern.                                             |
+| **Who registers DispatcherServlet in Spring Boot?** | Spring Boot auto-configures it when you add `spring-boot-starter-web`.       |
+| **What does it delegate to?**                       | HandlerMapping, HandlerAdapter, ViewResolver, HttpMessageConverter           |
+| **Does it handle both REST and MVC?**               | Yes. It works for both (JSON + HTML responses).                              |
+| **Is it a Singleton bean?**                         | Yes, one DispatcherServlet per web application context.                      |
+
+

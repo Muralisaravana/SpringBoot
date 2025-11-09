@@ -1,0 +1,47 @@
+Flow of MVC Architecture:
+Client → DispatcherServlet → Controller → Service → Repository → DB → Response
+
+DispatcherServlet:
+the front controller 
+it receives all incoming HTTP requests, decides where to send them, and sends back the response.
+DispatcherServlet acts as the entry point for every request.
+It follows the Front Controller Pattern.
+One servlet → handles all requests → delegates to the correct controller → builds response.
+
+Flow:
+Browser
+  ↓
+DispatcherServlet (Front Controller)
+  ↓
+HandlerMapping → Finds which Controller should handle "/employees/101"
+  ↓
+Controller (e.g. EmployeeController)
+  ↓
+Service Layer (Business logic)
+  ↓
+Repository Layer (Database call)
+  ↓
+Controller returns Model/Data
+  ↓
+ViewResolver (for web pages) or JSON converter (for REST)
+  ↓
+DispatcherServlet → sends final response to browser
+
+
+| Layer          | Responsibility                 |
+| -------------- | ------------------------------ |
+| **Controller** | Handles incoming HTTP requests |
+| **Service**    | Business logic                 |
+| **Repository** | Data access (JPA)              |
+
+Boot automatically registers DispatcherServlet mapped to /
+
+
+| Annotation                                                     | Purpose                        |
+| -------------------------------------------------------------- | ------------------------------ |
+| `@Controller`                                                  | Returns a **view** (HTML)      |
+| `@RestController`                                              | Returns **JSON**/Response body |
+| `@RequestMapping`                                              | Base path for controller       |
+| `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` | Define HTTP methods            |
+
+
