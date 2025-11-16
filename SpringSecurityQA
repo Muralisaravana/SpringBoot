@@ -1,0 +1,421 @@
+1. What is Spring Security?
+
+Spring Security is a powerful and customizable framework for authentication and authorization in Java/Spring applications.
+It provides:
+
+Authentication (login)
+
+Authorization (access control)
+
+Protection against attacks (CSRF, Session Fixation, Clickjacking)
+
+Password encoding
+
+Integration with OAuth2/JWT
+
+2. Difference between Authentication and Authorization?
+Authentication	Authorization
+Verifies who the user is	Determines what user can access
+Login process	Role/Permission checking
+Example: username/password	Example: ROLE_ADMIN
+3. What are the key components of Spring Security?
+
+UserDetailsService → Loads user data
+
+UserDetails → Represents authenticated user
+
+AuthenticationManager → Performs authentication
+
+SecurityFilterChain → Defines security rules
+
+PasswordEncoder → Encodes & matches passwords
+
+AuthenticationProvider → Custom authentication logic
+
+JwtFilter (custom) → JWT validation
+
+4. What is SecurityFilterChain?
+
+A list of servlet filters applied to every request.
+You configure it using:
+
+@Bean
+SecurityFilterChain securityFilterChain(HttpSecurity http)
+
+
+It defines:
+
+What is permitted
+
+What is authenticated
+
+Which filters to run
+
+5. What is UserDetailsService?
+
+An interface used by Spring Security to load user data from:
+
+DB
+
+In-memory
+
+LDAP
+Method:
+
+UserDetails loadUserByUsername(String username);
+
+6. What is PasswordEncoder? Why is it needed?
+
+Encodes passwords using algorithms like BCrypt.
+
+Purpose:
+
+Avoid storing plain-text passwords.
+
+Compare encoded DB password vs login password.
+
+Common encoder:
+
+new BCryptPasswordEncoder()
+
+7. How do you configure Spring Security in Spring Boot 3?
+
+By creating a SecurityFilterChain bean:
+
+http.csrf(cs -> cs.disable())
+    .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/login").permitAll()
+        .anyRequest().authenticated()
+    );
+
+8. What is CSRF? Why disable in REST APIs?
+
+CSRF = Cross Site Request Forgery
+Spring Security enables CSRF for forms by default.
+
+In REST APIs:
+
+No session
+
+Clients are not browsers
+So CSRF is usually disabled.
+
+9. What is the difference between WebSecurityConfigurerAdapter and SecurityFilterChain?
+
+WebSecurityConfigurerAdapter → Deprecated after Spring Security 5.7
+
+Now use SecurityFilterChain + Lambda DSL.
+
+10. What is JWT?
+
+JWT = JSON Web Token
+A stateless token used for authentication in REST APIs.
+
+Contains:
+
+Header (algorithm)
+
+Payload (claims)
+
+Signature
+
+11. How does JWT authentication work in Spring Security?
+
+Client sends username/password to /login.
+
+Server validates & returns a JWT token.
+
+Client sends JWT in every request header:
+
+Authorization: Bearer <token>
+
+
+JWT Filter validates token.
+
+If valid → set user in SecurityContext.
+
+12. What is inside JWT?
+
+iss → Issuer
+
+sub → Username
+
+exp → Expiration time
+
+iat → Issued date
+
+Custom claims → roles, email, etc.
+
+13. What is the use of JwtFilter?
+
+A custom filter that:
+
+Extracts token
+
+Validates token
+
+Loads user info
+
+Sets authentication into SecurityContextHolder
+
+Runs before:
+
+UsernamePasswordAuthenticationFilter
+
+14. What is SecurityContext and SecurityContextHolder?
+
+Stores authentication details for the current request.
+
+SecurityContextHolder.getContext().getAuthentication()
+
+15. What is AuthenticationManager?
+
+Performs authentication using:
+
+UserDetailsService
+
+PasswordEncoder
+
+AuthenticationProvider
+
+Used in login controller.
+
+16. What is AuthenticationProvider?
+
+Custom authentication logic.
+
+Example: authenticate using OTP, API key, or DB.
+
+17. What is GrantedAuthority?
+
+Represents roles/permissions:
+Example:
+
+ROLE_USER
+ROLE_ADMIN
+
+18. How do you secure methods using annotations?
+
+Enable method security:
+
+@EnableMethodSecurity
+
+
+Then use:
+
+@PreAuthorize("hasRole('ADMIN')")
+
+@PostAuthorize
+
+@Secured
+
+19. What is @EnableWebSecurity?
+
+Enables Spring Security filters in the application.
+
+20. How to permit specific URLs?
+http.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/public/**").permitAll()
+    .anyRequest().authenticated()
+);
+
+21. How to secure only specific endpoints?
+
+Use method-level security:
+
+@PreAuthorize("hasRole('ADMIN')")
+public String getAdminData() {}
+
+22. What is CORS?
+
+Cross-Origin Resource Sharing.
+
+Needed when frontend (React/Angular) calls backend from a different domain.
+
+Enable:
+
+http.cors();
+
+23. What are common security attacks prevented by Spring Security?
+
+CSRF
+
+Session Fixation
+
+Clickjacking
+
+XSS
+
+Brute-force (via rate limiting)
+
+Man-in-the-middle (when HTTPS is used)
+
+24. How to handle unauthorized errors?
+
+Implement an AuthenticationEntryPoint:
+
+public class AuthEntryPointJwt implements AuthenticationEntryPoint
+
+
+Used when:
+
+user is NOT authenticated (401)
+
+25. How to handle access denied errors?
+
+Use:
+
+AccessDeniedHandler
+
+
+Triggered when:
+
+user is authenticated but lacks permission (403)
+
+26. How to store roles in JWT?
+
+During token creation:
+
+claims.put("roles", user.getAuthorities());
+
+27. How to invalidate JWT tokens?
+
+JWT is stateless. Options:
+
+Expire token quickly
+
+Maintain a token blacklist
+
+Rotate tokens using refresh tokens
+
+Change signing secret
+
+28. Why is JWT stateless?
+
+No need to store session on server
+
+Server only verifies signature
+
+Highly scalable
+
+29. Why should JWT be short-lived?
+
+To reduce damage if token is stolen.
+
+Access token: 5–15 minutes
+Refresh token: 7–30 days
+
+30. Why should passwords never be stored in plain text?
+
+If DB leaks, all accounts are compromised.
+Use:
+
+BCryptPasswordEncoder
+
+31. What is OAuth2 in Spring Security?
+
+Protocol used for login with Google/Facebook, or secure API access using tokens.
+
+Spring Security has:
+
+OAuth2 Login
+
+OAuth2 Client
+
+OAuth2 Resource Server
+
+32. How to disable security for testing?
+spring.security.enabled=false
+
+
+or
+
+http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+33. Can you have multiple SecurityFilterChains?
+
+Yes.
+Spring Security picks the first matching chain.
+
+Example:
+
+API security chain
+
+Actuator chain
+
+Web UI chain
+
+Order matters.
+
+34. Why do we disable session in JWT apps?
+
+Because JWT is stateless.
+
+Configure:
+
+http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+35. Explain the complete flow of JWT authentication.
+
+User calls /login with username/password
+
+Spring Security authenticates
+
+Server returns JWT token
+
+User calls protected endpoints with Authorization: Bearer token
+
+JWT filter extracts and validates token
+
+If valid → put user into SecurityContext
+
+Controller executes
+
+If invalid → throw 401
+
+36. How to protect against brute-force login attempts?
+
+Rate limiting (Bucket4j / Redis)
+
+Account lock after N failures
+
+CAPTCHA
+
+IP throttling
+
+37. Difference between Principal and Authentication?
+
+Principal = actual user object
+
+Authentication = includes principal + credentials + authorities
+
+38. What is OncePerRequestFilter?
+
+A filter that executes once per request.
+Used for JWT validation.
+
+39. Why is BCrypt preferred over MD5/SHA?
+
+Slow and expensive → resists brute-force
+
+Uses a random salt
+
+Widely tested and secure
+
+40. Real-time Project Scenario Question: How will you secure microservices?
+
+API gateway with JWT validation
+
+Service-to-service communication with internal tokens / mTLS
+
+Central authentication service
+
+Role-based authorization
+
+Rotate secrets regularly
+
+Enable CORS and HTTPS
+
+Use short-lived JWT + refresh tokens
+
+Store secrets in Vault, not config files
