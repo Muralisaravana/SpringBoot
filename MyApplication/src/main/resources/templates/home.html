@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+
+<h2>Welcome to the Application</h2>
+
+<!-- If the user is logged in -->
+<div th:if="${user}">
+    <p>You are logged in as: <strong th:text="${user}"></strong></p>
+    <a th:href="@{/logout}">Logout</a>
+</div>
+
+<!-- If the user is not logged in -->
+<div th:if="${user == null}">
+    <p>You are not logged in.</p>
+    <a th:href="@{/signin}">Sign In</a> |
+    <a th:href="@{/signup}">Register</a>
+</div>
+
+</body>
+</html>

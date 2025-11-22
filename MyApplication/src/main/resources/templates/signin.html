@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In</title>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<!-- Show success message (logout / registration success) -->
+<div th:if="${message}" style="color: green; margin-bottom: 10px;">
+    <p th:text="${message}"></p>
+</div>
+
+<!-- Show login error -->
+<div th:if="${error}" style="color: red; margin-bottom: 10px;">
+    <p th:text="${error}"></p>
+</div>
+
+<!-- Login Form -->
+<form th:action="@{/perform_login}" method="post">
+
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Sign In</button>
+</form>
+
+<br>
+<p>Don't have an account? <a th:href="@{/signup}">Register Here</a></p>
+
+</body>
+</html>
